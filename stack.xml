@@ -1,0 +1,8 @@
+<stack>
+  <description brief="Commonly use utility packages in HRL">Commonly use utility packages in HRL</description>
+  <author>Hai Nguyen, Advait Jain, Travis Deyle, Kelsey Hawkins, and Various Students. Advisor: Prof Charles C. Kemp. Lab: Healthcare Robotics Lab (Georgia Tech)</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/hrl-pr2</url>
+  <depend stack="ros" />
+</stack>
