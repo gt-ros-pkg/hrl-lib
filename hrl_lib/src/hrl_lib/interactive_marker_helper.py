@@ -59,25 +59,32 @@ def make_control_marker(orientation=[0,0,0,1.]):
     control.interaction_mode = ims.InteractiveMarkerControl.MOVE_AXIS
     return control
 
-def make_directional_controls(name):
-    x_control = make_control_marker()
-    x_control.orientation.x = 1
-    x_control.name = name + "_move_x"
+def make_directional_controls(name, x=True, y=True, z=True):
+    l = []
+    
+    if x:
+        x_control = make_control_marker()
+        x_control.orientation.x = 1
+        x_control.name = name + "_move_x"
+        l.append(x_control)
+    
+    if y:
+        y_control = make_control_marker()
+        y_control.orientation.y = 1
+        y_control.name = name + "_move_y"
+        l.append(y_control)
 
-    y_control = make_control_marker()
-    y_control.orientation.y = 1
-    y_control.name = name + "_move_y"
+    if z:
+        z_control = make_control_marker()
+        z_control.orientation.z = 1
+        z_control.name = name + "_move_z"
+        l.append(z_control)
 
-    z_control = make_control_marker()
-    z_control.orientation.z = 1
-    z_control.name = name + "_move_z"
+    return l
 
-    return [x_control, y_control, z_control]
-
-def make_orientation_controls(name):
-    controls = make_directional_controls(name + '_rotate')
-    controls[0].interaction_mode = ims.InteractiveMarkerControl.ROTATE_AXIS
-    controls[1].interaction_mode = ims.InteractiveMarkerControl.ROTATE_AXIS
-    controls[2].interaction_mode = ims.InteractiveMarkerControl.ROTATE_AXIS
+def make_orientation_controls(name, x=True, y=True, z=True):
+    controls = make_directional_controls(name + '_rotate', x, y, z)
+    for c in controls:
+        c.interaction_mode = ims.InteractiveMarkerControl.ROTATE_AXIS
     return controls
 
