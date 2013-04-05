@@ -148,6 +148,50 @@ def plot_circle(cx, cy, rad, start_angle, end_angle, step=math.radians(2),
     pp.axis('equal')
     return pp.plot(x,y,c=color,label=label,linewidth=linewidth, alpha=alpha)
 
+## plot rectangle 
+# @param cx - x coord of center of rectangle.
+# @param cy - y coord of center of rectangle.
+# @param slope - slope of rectangle. (0 is aligned along x axis)
+# @param width - width of the rectangle
+# @param length - length of the rectangle
+# @param color - color of the circle.
+# @param label - legend label.
+def plot_rectangle(cx, cy, slope, width, length, color='k', label='', 
+                   alpha=1.0, linewidth=2):
+
+
+    mEdge = np.matrix([[-length, length, length, -length, -length],
+                       [width, width, -width, -width, width]]) * 0.5
+
+    mRot = np.matrix([[np.cos(slope), -np.sin(slope)],
+                      [np.sin(slope), np.cos(slope)]])
+
+    mRotEdge = mRot * mEdge
+    
+    x,y=[],[]
+
+    for i in range(5):
+        x.append(cx + mRotEdge[0,i])
+        y.append(cy + mRotEdge[1,i])
+
+    ## x.append(cx-length/2.0)
+    ## y.append(cy+width/2.0)
+
+    ## x.append(cx+length/2.0)
+    ## y.append(cy+width/2.0)
+    
+    ## x.append(cx+length/2.0)
+    ## y.append(cy-width/2.0)
+    
+    ## x.append(cx-length/2.0)
+    ## y.append(cy-width/2.0)
+
+    ## x.append(cx-length/2.0)
+    ## y.append(cy+width/2.0)
+
+    pp.axis('equal')
+    return pp.plot(x,y,c=color,label=label,linewidth=linewidth, alpha=alpha)
+    
 ## plot radii at regular angular intervals.
 # @param cx - x coord of center of circle.
 # @param cy - y coord of center of circle.
