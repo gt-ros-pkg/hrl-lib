@@ -30,7 +30,7 @@
 import roslib; roslib.load_manifest('hrl_lib')
 
 import os, sys
-import copy
+import copy, random
 import numpy as np
 import time
 import math
