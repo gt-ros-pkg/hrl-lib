@@ -27,11 +27,15 @@
 
 #  \author Daehyung Park (Healthcare Robotics Lab, Georgia Tech.)
 
+import roslib; roslib.load_manifest('hrl_lib')
+
 import os, sys
 import copy
 import numpy as np
 import time
 import math
+
+import tf.transformations as tft
 
 #copied from manipulation stack
 #angle between two quaternions (as lists)
@@ -123,3 +127,10 @@ def quat_random( n ):
                                     np.sqrt(u1)*np.cos(2.0*np.pi*u3)])])
 
     return X
+
+def quat_to_angle_and_axis( q ):
+
+    mat = tft.quaternion_matrix(q)
+    angle, direction, point = tft.rotation_from_matrix(mat)
+                
+    return angle, direction
