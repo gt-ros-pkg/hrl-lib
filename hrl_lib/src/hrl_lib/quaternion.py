@@ -129,6 +129,30 @@ def quat_random( n ):
 
     return X
 
+    
+# Return n numbers of QuTem quaternions (gaussian distribution).        
+def quat_QuTem( quat_mean, n, stdDev ):
+
+    # Gaussian random quaternion
+    x = np.array([np.random.normal(0., 1., n)]).T
+    y = np.array([np.random.normal(0., 1., n)]).T
+    z = np.array([np.random.normal(0., 1., n)]).T
+    mag = np.sqrt([x*x+y*y+z*z])
+    
+    axis = np.hstack([x*stdDev[0]*stdDev[0]/mag,
+                      y*stdDev[1]*stdDev[1]/mag,
+                      z*stdDev[2]*stdDev[2]/mag])
+    angle = np.array([np.random.normal(0., stdDev[3]**2.0, n)]).T
+
+    
+    double s = sin(angle / 2);
+    q = np.hstack([axis*s, np.cos(angle/2.0)]);
+
+    # Multiplication with mean quat
+    
+    return
+
+    
 # Return an axis and angle converted from a quaternion.
 def quat_to_angle_and_axis( q ):
 
@@ -136,3 +160,5 @@ def quat_to_angle_and_axis( q ):
     angle, direction, point = tft.rotation_from_matrix(mat)
                 
     return angle, direction
+
+
