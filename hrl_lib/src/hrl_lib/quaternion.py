@@ -28,7 +28,7 @@
 #  \author Daehyung Park (Healthcare Robotics Lab, Georgia Tech.)
 
 import os, sys
-import copy
+import copy, random
 import numpy as np
 import time
 import math
@@ -130,10 +130,9 @@ def quat_random( n ):
     return X
 
 # Return an axis and angle converted from a quaternion.
-def quat_to_angle_and_axis(q):
+def quat_to_angle_and_axis( q ):
 
     mat = tft.quaternion_matrix(q)
     angle, direction, point = tft.rotation_from_matrix(mat)
                 
     return angle, direction
-    
