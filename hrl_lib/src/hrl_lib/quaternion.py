@@ -33,6 +33,10 @@ import numpy as np
 import time
 import math
 
+# ROS & Public library
+import roslib; roslib.load_manifest('hrl_lib')
+import tf.transformations as tft
+
 #copied from manipulation stack
 #angle between two quaternions (as lists)
 def quat_angle(quat1, quat2):
@@ -103,6 +107,7 @@ def quat_random( n ):
     u2 = random.random()
     u3 = random.random()
 
+    # Quaternions ix+jy+kz+w are represented as [x, y, z, w].
     X = np.array([np.sqrt(1-u1)*np.sin(2.0*np.pi*u2),
                   np.sqrt(1-u1)*np.cos(2.0*np.pi*u2),
                   np.sqrt(u1)*np.sin(2.0*np.pi*u3),
@@ -123,3 +128,12 @@ def quat_random( n ):
                                     np.sqrt(u1)*np.cos(2.0*np.pi*u3)])])
 
     return X
+
+# Return an axis and angle converted from a quaternion.
+def quat_to_angle_and_axis(q):
+
+    mat = tft.quaternion_matrix(q)
+    angle, direction, point = tft.rotation_from_matrix(mat)
+                
+    return angle, direction
+    
