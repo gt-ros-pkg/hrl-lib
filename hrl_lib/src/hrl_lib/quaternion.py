@@ -130,35 +130,76 @@ def quat_random( n ):
     return X
 
     
+# quat_mean: a quaternion(xyzw) that is the center of gaussian distribution
+# n:
+# stdDev: a vector (4x1) that describes the standard deviations of the distribution 
+#         along axis(xyz) and angle
 # Return n numbers of QuTem quaternions (gaussian distribution).        
 def quat_QuTem( quat_mean, n, stdDev ):
 
     # Gaussian random quaternion
-    x = np.array([np.random.normal(0., 1., n)]).T
-    y = np.array([np.random.normal(0., 1., n)]).T
-    z = np.array([np.random.normal(0., 1., n)]).T
-    mag = np.sqrt([x*x+y*y+z*z])
-    
-    axis = np.hstack([x*stdDev[0]*stdDev[0]/mag,
-                      y*stdDev[1]*stdDev[1]/mag,
-                      z*stdDev[2]*stdDev[2]/mag])
-    angle = np.array([np.random.normal(0., stdDev[3]**2.0, n)]).T
+    x = (np.array([np.random.normal(0., 1., n)]).T *stdDev[0]*stdDev[0])
+    y = (np.array([np.random.normal(0., 1., n)]).T *stdDev[1]*stdDev[1])
+    z = (np.array([np.random.normal(0., 1., n)]).T *stdDev[2]*stdDev[2])
 
+    mag = np.zeros((n,1))
+    for i in xrange(len(x)):
+        mag[i,0] = np.sqrt([x[i,0]**2+y[i,0]**2+z[i,0]**2])
     
-    double s = sin(angle / 2);
-    q = np.hstack([axis*s, np.cos(angle/2.0)]);
+    axis  = np.hstack([x/mag, y/mag, z/mag])    
+    ## angle = np.array([np.random.normal(0., stdDev[3]**2.0, n)]).T
+    angle = np.zeros([len(x),1])
+    for i in xrange(len(x)):
+        rnd = 0.0
+        while True:
+            rnd = np.random.normal(0.,1.)
+            if rnd <= np.pi and rnd > -np.pi:
+                break
+        angle[i,0] = rnd + np.pi
+    
+    # Convert the gaussian axis and angle distribution to unit quaternion distribution
+    # angle should be limited to positive range...
+    s = np.sin(angle / 2.0);
+    quat_rnd = np.hstack([axis*s, np.cos(angle/2.0)])
 
     # Multiplication with mean quat
-    
-    return
+    q = np.zeros((n,4))    
+    for i in xrange(len(x)):
+        q[i,:] = tft.quaternion_multiply(quat_mean, quat_rnd[i,:])
+       
+    return q
 
     
 # Return an axis and angle converted from a quaternion.
 def quat_to_angle_and_axis( q ):
 
-    mat = tft.quaternion_matrix(q)
-    angle, direction, point = tft.rotation_from_matrix(mat)
-                
+    ## mat = tft.quaternion_matrix(q)
+    ## angle, direction, point = tft.rotation_from_matrix(mat)
+
+    ## # tf has some numerical error around pi.
+    ## if (abs(angle)-np.pi)**2 < 0.001 and angle < 0.0:
+    ##     print "fix error", angle
+    ##     angle = abs(angle)
+    ##     direction *= -1.0
+    
+    ## print q, angle, direction
+    
+    ## Reference: http://www.euclideanspace.com
+    if abs(q[3]) > 1.0: q /= np.linalg.norm(q)
+    angle = 2.0 * math.acos(q[3]) # 0~2pi
+    s = np.sqrt(1-q[3]*q[3]) # assuming quaternion normalised then w is less than 1, so term always positive.
+    if s < 0.001: # test to avoid divide by zero, s is always positive due to sqrt
+        #if s close to zero then direction of axis not important
+        # if it is important that axis is normalised then replace with x=1; y=z=0;
+        direction = np.array([q[0],q[1],q[2]])
+        print "s is closed to singular"
+    else:
+        # normalise axis
+        direction = np.array([q[0],q[1],q[2]])/s
+
+    if direction[0] > 0.0:
+        print angle, q[3], direction,s
+        
     return angle, direction
 
 
