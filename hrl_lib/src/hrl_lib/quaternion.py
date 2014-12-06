@@ -27,6 +27,8 @@
 
 #  \author Daehyung Park (Healthcare Robotics Lab, Georgia Tech.)
 
+# NOTE: tf's quaternion order is [x,y,z,w]
+
 import os, sys
 import copy, random
 import numpy as np
@@ -35,7 +37,7 @@ import math
 
 # ROS & Public library
 import roslib; roslib.load_manifest('hrl_lib')
-import tf.transformations as tft
+import tf.transformations as tft 
 
 #copied from manipulation stack
 #angle between two quaternions (as lists)
@@ -202,4 +204,122 @@ def quat_to_angle_and_axis( q ):
         
     return angle, direction
 
+    
+# Return a rotation matrix from a quaternion 
+def quat2rot(quat):
+    # quaternion [w,x,y,z] 
+    rot = np.matrix([[1 - 2*quat.y*quat.y - 2*quat.z*quat.z,	2*quat.x*quat.y - 2*quat.z*quat.w,      2*quat.x*quat.z + 2*quat.y*quat.w],
+                    [2*quat.x*quat.y + 2*quat.z*quat.w, 	    1 - 2*quat.x*quat.x - 2*quat.z*quat.z, 	2*quat.y*quat.z - 2*quat.x*quat.w],
+                    [2*quat.x*quat.z - 2*quat.y*quat.w, 	    2*quat.y*quat.z + 2*quat.x*quat.w, 	    1 - 2*quat.x*quat.x - 2*quat.y*quat.y]])
+    return rot
 
+
+def euler2quat(z=0, y=0, x=0):
+    ''' Return quaternion corresponding to these Euler angles
+
+    Uses the z, then y, then x convention above
+
+    Parameters
+    ----------
+    z : scalar
+       Rotation angle in radians around z-axis (performed first)
+    y : scalar
+       Rotation angle in radians around y-axis
+    x : scalar
+       Rotation angle in radians around x-axis (performed last)
+
+    Returns
+    -------
+    quat : array shape (4,)
+       Quaternion in w, x, y z (real, then vector) format
+
+    Notes
+    -----
+    We can derive this formula in Sympy using:
+
+    1. Formula giving quaternion corresponding to rotation of theta radians
+       about arbitrary axis:
+       http://mathworld.wolfram.com/EulerParameters.html
+    2. Generated formulae from 1.) for quaternions corresponding to
+       theta radians rotations about ``x, y, z`` axes
+    3. Apply quaternion multiplication formula -
+       http://en.wikipedia.org/wiki/Quaternions#Hamilton_product - to
+       formulae from 2.) to give formula for combined rotations.
+    '''
+    z = z/2.0
+    y = y/2.0
+    x = x/2.0
+    cz = np.cos(z)
+    sz = np.sin(z)
+    cy = np.cos(y)
+    sy = np.sin(y)
+    cx = np.cos(x)
+    sx = np.sin(x)
+    return np.array([cx*sy*sz + cy*cz*sx,
+                     cx*cz*sy - sx*cy*sz,
+                     cx*cy*sz + sx*cz*sy,
+                     cx*cy*cz - sx*sy*sz])
+
+
+# Will be removed. Use tft.quaternion_multiply.
+# quaternoin [x,y,z,w]
+def quat_quat_mult(q1, q2):
+    [x1, y1, z1, w1] = q1
+    [x2, y2, z2, w2] = q2
+    w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+    x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+    y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
+    z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
+    return np.array([x, y, z, w])
+
+
+# t=0, then qm=qa
+def slerp(qa, qb, t):
+	# quaternion to return
+    qm = Quaternion()
+
+	# Calculate angle between them.
+    cosHalfTheta = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z
+	# if qa=qb or qa=-qb then theta = 0 and we can return qa
+    if abs(cosHalfTheta) >= 1.0:
+        qm.w = qa.w;qm.x = qa.x;qm.y = qa.y;qm.z = qa.z
+        return qm
+
+    # shortest path
+    if cosHalfTheta < 0.0:
+        qb.w *= -1.0
+        qb.x *= -1.0
+        qb.y *= -1.0
+        qb.z *= -1.0
+        
+        cosHalfTheta *= -1.0
+
+    # Calculate temporary values.
+    halfTheta = np.arccos(cosHalfTheta)
+    sinHalfTheta = np.sqrt(1.0 - np.cos(halfTheta)*np.cos(halfTheta))
+    
+    # if theta = 180 degrees then result is not fully defined
+    # we could rotate around any axis normal to qa or qb
+    if abs(sinHalfTheta) < 0.001: # fabs is floating point absolute
+        qm.w = (qa.w * 0.5 + qb.w * 0.5)
+        qm.x = (qa.x * 0.5 + qb.x * 0.5)
+        qm.y = (qa.y * 0.5 + qb.y * 0.5)
+        qm.z = (qa.z * 0.5 + qb.z * 0.5)
+        return qm
+
+    ratioA = np.sin((1 - t) * halfTheta) / sinHalfTheta
+    ratioB = np.sin(t * halfTheta) / sinHalfTheta
+
+    #calculate Quaternion.
+    qm.w = (qa.w * ratioA + qb.w * ratioB)
+    qm.x = (qa.x * ratioA + qb.x * ratioB)
+    qm.y = (qa.y * ratioA + qb.y * ratioB)
+    qm.z = (qa.z * ratioA + qb.z * ratioB)
+    
+    #mag = np.sqrt(qm.w**2+qm.x**2+qm.y**2+qm.z**2)
+    #print mag
+    ## qm.w /= mag
+    ## qm.x /= mag
+    ## qm.y /= mag
+    ## qm.z /= mag    
+    return qm
