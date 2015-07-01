@@ -31,7 +31,6 @@ if __name__ == '__main__':
         rospy.loginfo('Spin broken! restoring your old configuration.')
         response = client.update_configuration(node_config)
         rospy.signal_shutdown("interrupted")
-    
 
 
 
