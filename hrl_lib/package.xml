@@ -2,17 +2,10 @@
   <name>hrl_lib</name>
   <version>0.0.0</version>
   <description>hrl_lib</description>
-  <maintainer email="">Cressel Anderson</maintainer>
-  <maintainer email="">Travis Deyle</maintainer>
-  <maintainer email="">Advait Jain</maintainer>
-  <maintainer email="">Hai Nguyen</maintainer>
-  <maintainer email="">Advisor: Prof. Charlie Kemp</maintainer>
-  <maintainer email="">Lab: Healthcare Robotics Lab at Georgia Tech</maintainer>
-
+  <maintainer email="phillip.grice@gatech.edu">Phillip GRice</maintainer>
   <license>New BSD</license>
 
   <url type="website"></url>
-  <!-- <url type="bugtracker"></url> -->
 
   <author>Cressel Anderson</author>
   <author>Travis Deyle</author>
@@ -43,15 +36,5 @@
   <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>kdl</run_depend>
   <run_depend>hrl_msgs</run_depend>
-
-  <!-- Dependencies needed only for running tests. -->
-  <!-- <test_depend>std_srvs</test_depend> -->
-  <!-- <test_depend>geometry_msgs</test_depend> -->
-  <!-- <test_depend>sensor_msgs</test_depend> -->
-  <!-- <test_depend>visualization_msgs</test_depend> -->
-  <!-- <test_depend>tf</test_depend> -->
-  <!-- <test_depend>dynamic_reconfigure</test_depend> -->
-  <!-- <test_depend>kdl</test_depend> -->
-  <!-- <test_depend>hrl_msgs</test_depend> -->
 
 </package>
