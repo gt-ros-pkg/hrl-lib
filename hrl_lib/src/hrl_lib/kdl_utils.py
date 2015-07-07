@@ -30,9 +30,6 @@
 
 import numpy as np, math
 
-import roslib
-roslib.load_manifest('hrl_lib')
-
 import PyKDL as kdl
 
 

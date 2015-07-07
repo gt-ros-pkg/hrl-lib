@@ -31,7 +31,6 @@
 import math
 import numpy as np
 
-import roslib; roslib.load_manifest('tf') # only depending on tf for transformations.py
 import tf.transformations as tft
 
 def homogeneousToxyz(p):

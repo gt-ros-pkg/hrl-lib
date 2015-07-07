@@ -57,7 +57,6 @@ def dimen_reduc(x, n_dim):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as pp
-    import roslib; roslib.load_manifest('hrl_lib')
     import hrl_lib.matplotlib_util as mpu
 
     pp.axis('equal')

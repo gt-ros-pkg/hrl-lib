@@ -1,9 +1,11 @@
-#! /usr/bin/python
-## {{{ http://code.activestate.com/recipes/572182/ (r2)
-import sys, termios, atexit
+#! /usr/bin/env python
+#  http://code.activestate.com/recipes/572182/ (r2)
+import sys
+import termios
+import atexit
 from select import select
-import roslib; roslib.load_manifest('hrl_lib')
 import rospy
+
 
 class KeyboardInput():
     def __init__(self):
@@ -59,7 +61,7 @@ class KeyboardInput():
             rospy.sleep(0.01)
         rospy.loginfo("CONTINUING")
 
-if __name__ == '__main__':
+def main():
     ki = KeyboardInput()
 
     while True:
@@ -73,5 +75,5 @@ if __name__ == '__main__':
         sys.stdout.write('.')
 
     print 'done'
-## end of http://code.activestate.com/recipes/572182/ }}}
+# end of http://code.activestate.com/recipes/572182/ }}}
 

@@ -1,7 +1,6 @@
 
 import numpy as np
 
-import roslib; roslib.load_manifest('hrl_lib')
 import rospy
 import visualization_msgs.msg as vm
 import geometry_msgs.msg as gm
@@ -35,8 +34,8 @@ def text_marker(text, position, scale, color, frame, m_id=0):
     m.type = create_mdict()['text_view_facing']
 
     m.pose.position.x = position[0,0]
-    m.pose.position.y = position[1,0]              
-    m.pose.position.z = position[2,0]              
+    m.pose.position.y = position[1,0]
+    m.pose.position.z = position[2,0]
     m.scale.z = scale
     m.color.r = color[0,0]
     m.color.g = color[1,0]
@@ -70,7 +69,7 @@ def list_marker(points, colors, scale, mtype, mframe, duration=10.0, m_id=0):
     return m
 
 
-def text_marker(text, center, color, scale, mframe, 
+def text_marker(text, center, color, scale, mframe,
         duration=10.0, m_id=0):
 
     m = vm.Marker()
@@ -105,7 +104,7 @@ def circle_marker(center, radius, scale, color, mframe, z=.03, duration=10.0, m_
     m.lifetime = rospy.Duration(duration)
     return m
 
-    
+
 
 ##
 # Create a visualization_msgs.Marker message given a point
@@ -120,8 +119,8 @@ def single_marker(point, orientation, mtype, mframe, scale=[.2,.2,.2], color=[1.
     m.action = vm.Marker.ADD
 
     m.pose.position.x = point[0,0]
-    m.pose.position.y = point[1,0]              
-    m.pose.position.z = point[2,0]              
+    m.pose.position.y = point[1,0]
+    m.pose.position.z = point[2,0]
     m.pose.orientation.x = orientation[0,0]
     m.pose.orientation.y = orientation[1,0]
     m.pose.orientation.z = orientation[2,0]

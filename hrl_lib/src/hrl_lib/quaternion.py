@@ -29,15 +29,13 @@
 
 # NOTE: tf's quaternion order is [x,y,z,w]
 
-import os, sys
-import copy, random
+import copy
+import random
 import numpy as np
-import time
 import math
 
 # ROS & Public library
-import roslib; roslib.load_manifest('hrl_lib')
-import tf.transformations as tft 
+import tf.transformations as tft
 
 #copied from manipulation stack
 #angle between two quaternions (as lists)
@@ -48,7 +46,7 @@ def quat_angle(quat1, quat2):
     if dot < -1.:
         dot = -1.
     angle = 2*math.acos(math.fabs(dot))
-    return angle     
+    return angle
 
 # Return a co-distance matrix between X and Y.
 # X and Y are a set of quaternions.
@@ -64,7 +62,7 @@ def quat_angles( X, Y ):
 
 # Return a quaternion, which is a negation of input quaternion.
 def quat_inv_sign(q):
-    return q* (-1.0)    
+    return q* (-1.0)
 
 # Return a normalized quaternion
 def quat_normal(q):
@@ -73,9 +71,9 @@ def quat_normal(q):
 
 # Return true or false whether two quaternion is on a same hemisphere.
 def AreQuaternionClose(q1,q2):
-    
+
     dot = np.sum(q1*q2)
-    
+
     if dot < 0.0:
         return False
     else:
@@ -90,7 +88,7 @@ def quat_avg( X ):
     for i,x in enumerate(X):
 
         if i==0: continue
-        
+
         new_x = copy.copy(x)
         if not AreQuaternionClose(new_x,X[0]):
             new_x = quat_inv_sign(new_x)
@@ -101,8 +99,8 @@ def quat_avg( X ):
 
     return quat_normal(cumulative_x)
 
-    
-# Return n numbers of uniform random quaternions.    
+
+# Return n numbers of uniform random quaternions.
 def quat_random( n ):
 
     u1 = random.random()
@@ -131,12 +129,12 @@ def quat_random( n ):
 
     return X
 
-    
+
 # quat_mean: a quaternion(xyzw) that is the center of gaussian distribution
 # n:
-# stdDev: a vector (4x1) that describes the standard deviations of the distribution 
+# stdDev: a vector (4x1) that describes the standard deviations of the distribution
 #         along axis(xyz) and angle
-# Return n numbers of QuTem quaternions (gaussian distribution).        
+# Return n numbers of QuTem quaternions (gaussian distribution).
 def quat_QuTem( quat_mean, n, stdDev ):
 
     # Gaussian random quaternion
@@ -147,8 +145,8 @@ def quat_QuTem( quat_mean, n, stdDev ):
     mag = np.zeros((n,1))
     for i in xrange(len(x)):
         mag[i,0] = np.sqrt([x[i,0]**2+y[i,0]**2+z[i,0]**2])
-    
-    axis  = np.hstack([x/mag, y/mag, z/mag])    
+
+    axis  = np.hstack([x/mag, y/mag, z/mag])
     ## angle = np.array([np.random.normal(0., stdDev[3]**2.0, n)]).T
     angle = np.zeros([len(x),1])
     for i in xrange(len(x)):
@@ -158,20 +156,20 @@ def quat_QuTem( quat_mean, n, stdDev ):
             if rnd <= np.pi and rnd > -np.pi:
                 break
         angle[i,0] = rnd + np.pi
-    
+
     # Convert the gaussian axis and angle distribution to unit quaternion distribution
     # angle should be limited to positive range...
     s = np.sin(angle / 2.0);
     quat_rnd = np.hstack([axis*s, np.cos(angle/2.0)])
 
     # Multiplication with mean quat
-    q = np.zeros((n,4))    
+    q = np.zeros((n,4))
     for i in xrange(len(x)):
         q[i,:] = tft.quaternion_multiply(quat_mean, quat_rnd[i,:])
-       
+
     return q
 
-    
+
 # Return an axis and angle converted from a quaternion.
 def quat_to_angle_and_axis( q ):
 
@@ -183,9 +181,9 @@ def quat_to_angle_and_axis( q ):
     ##     print "fix error", angle
     ##     angle = abs(angle)
     ##     direction *= -1.0
-    
+
     ## print q, angle, direction
-    
+
     ## Reference: http://www.euclideanspace.com
     if abs(q[3]) > 1.0: q /= np.linalg.norm(q)
     angle = 2.0 * math.acos(q[3]) # 0~2pi
@@ -201,13 +199,13 @@ def quat_to_angle_and_axis( q ):
 
     if direction[0] > 0.0:
         print angle, q[3], direction,s
-        
+
     return angle, direction
 
-    
-# Return a rotation matrix from a quaternion 
+
+# Return a rotation matrix from a quaternion
 def quat2rot(quat):
-    # quaternion [w,x,y,z] 
+    # quaternion [w,x,y,z]
     rot = np.matrix([[1 - 2*quat.y*quat.y - 2*quat.z*quat.z,	2*quat.x*quat.y - 2*quat.z*quat.w,      2*quat.x*quat.z + 2*quat.y*quat.w],
                     [2*quat.x*quat.y + 2*quat.z*quat.w, 	    1 - 2*quat.x*quat.x - 2*quat.z*quat.z, 	2*quat.y*quat.z - 2*quat.x*quat.w],
                     [2*quat.x*quat.z - 2*quat.y*quat.w, 	    2*quat.y*quat.z + 2*quat.x*quat.w, 	    1 - 2*quat.x*quat.x - 2*quat.y*quat.y]])
@@ -291,13 +289,13 @@ def slerp(qa, qb, t):
         qb.x *= -1.0
         qb.y *= -1.0
         qb.z *= -1.0
-        
+
         cosHalfTheta *= -1.0
 
     # Calculate temporary values.
     halfTheta = np.arccos(cosHalfTheta)
     sinHalfTheta = np.sqrt(1.0 - np.cos(halfTheta)*np.cos(halfTheta))
-    
+
     # if theta = 180 degrees then result is not fully defined
     # we could rotate around any axis normal to qa or qb
     if abs(sinHalfTheta) < 0.001: # fabs is floating point absolute
@@ -315,11 +313,11 @@ def slerp(qa, qb, t):
     qm.x = (qa.x * ratioA + qb.x * ratioB)
     qm.y = (qa.y * ratioA + qb.y * ratioB)
     qm.z = (qa.z * ratioA + qb.z * ratioB)
-    
+
     #mag = np.sqrt(qm.w**2+qm.x**2+qm.y**2+qm.z**2)
     #print mag
     ## qm.w /= mag
     ## qm.x /= mag
     ## qm.y /= mag
-    ## qm.z /= mag    
+    ## qm.z /= mag
     return qm

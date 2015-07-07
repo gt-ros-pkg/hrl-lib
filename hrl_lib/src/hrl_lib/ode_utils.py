@@ -30,11 +30,7 @@
 
 # ODE - Open Dynamics Engine.
 
-import numpy as np, math
-
-import roslib
-roslib.load_manifest('hrl_lib')
-
+import numpy as np
 
 # take ODE's rotation (as returned by getRotation) and convert to a
 # rotation matrix.
@@ -43,8 +39,3 @@ def ode_rotation_to_matrix(rot):
                          [rot[1], rot[5], rot[9]],
                          [rot[2], rot[6], rot[10]]])
     return rot_mat
-
-
-
-
-

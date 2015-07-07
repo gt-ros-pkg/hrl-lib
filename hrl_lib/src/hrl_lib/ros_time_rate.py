@@ -7,12 +7,10 @@
 ## author: Advait Jain
 
 
-import sys, time
+import time
 import curses
-import numpy as np, math
 import threading
 
-import roslib; roslib.load_manifest('hrl_lib')
 import rospy
 
 class ROSTimeRate(threading.Thread):
@@ -38,7 +36,7 @@ class ROSTimeRate(threading.Thread):
 
 if __name__ == '__main__':
     rospy.init_node('ros_time_rate_printer')
-    
+
     rtr = ROSTimeRate()
 
     stdscr = curses.initscr()
