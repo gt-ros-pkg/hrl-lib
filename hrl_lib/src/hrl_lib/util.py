@@ -1,12 +1,11 @@
-
-import os, sys, tty
+import os
+import sys
+import tty
 import numpy as np
 import cPickle as pk
 import time
-import threading
 import math
 
-from hrl_lib.msg import NumpyArray
 
 ## Returns a string that can be used as a timestamp (hours and minutes) in logfiles
 # @return timestamp-string
@@ -22,7 +21,7 @@ def quat_angle(quat1, quat2):
     if dot < -1.:
         dot = -1.
     angle = 2*math.acos(math.fabs(dot))
-    return angle     
+    return angle
 
 def standard_rad(t):
     if t > 0:
@@ -75,7 +74,7 @@ def save_pickle(object, filename):
     pk.dump(object, pickle_file)
     pickle_file.close()
 
-## Calculate L2 norm for column vectors in a matrix 
+## Calculate L2 norm for column vectors in a matrix
 # @param mat - numpy matrix
 def norm(mat):
     return np.power(np.sum(np.power(mat,2), axis=0), 0.5)
@@ -127,26 +126,30 @@ def bound(value, lower, upper):
     return ret_val
 
 
+### Note: NumpyArray msg removed during switch to hydro, commented out here
+# assuming that it is unused.  If needed, re-add msg to hrl_msgs, and add dependency from there.
+# -PMG, 29JUL2015
 
+#from hrl_lib.msg import NumpyArray
 ## wraps a numpy array into hrl's datatype for sending np arrays
 # over ros.
 # @param np array
 # @return NumpyArray object (hrl_lib/msg/NumpyArray.msg)
-def wrap_np_array(nparr):
-    shp = nparr.shape
-    npstr = nparr.tostring()
-    npdtype = str(nparr.dtype)
-    nparr_ros = NumpyArray(None,npstr,shp,npdtype)
-    return nparr_ros
+#def wrap_np_array(nparr):
+#    shp = nparr.shape
+#    npstr = nparr.tostring()
+#    npdtype = str(nparr.dtype)
+#    nparr_ros = NumpyArray(None,npstr,shp,npdtype)
+#    return nparr_ros
 
 ## convert hrl's ros wrapped numpy array to a numpy array
 # @param NumpyArray object (hrl_lib/msg/NumpyArray.msg)
 # @return np array
-def unwrap_np_array(nparr_ros):
-    npstr,shp,npdtype = nparr_ros.data,nparr_ros.shape,nparr_ros.dtype
-    nparr = np.fromstring(npstr,dtype=npdtype)
-    nparr = nparr.reshape(shp)
-    return nparr
+#def unwrap_np_array(nparr_ros):
+#    npstr,shp,npdtype = nparr_ros.data,nparr_ros.shape,nparr_ros.dtype
+#    nparr = np.fromstring(npstr,dtype=npdtype)
+#    nparr = nparr.reshape(shp)
+#    return nparr
 
 
 ## cartesian product of list of lists.
