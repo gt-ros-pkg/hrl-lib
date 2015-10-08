@@ -38,6 +38,7 @@ import math
 # ROS & Public library
 import roslib; roslib.load_manifest('hrl_lib')
 import tf.transformations as tft 
+from geometry_msgs.msg import Quaternion
 
 #copied from manipulation stack
 #angle between two quaternions (as lists)
@@ -214,6 +215,7 @@ def quat2rot(quat):
     return rot
 
 
+# NOTE: is it really correct???
 def euler2quat(z=0, y=0, x=0):
     ''' Return quaternion corresponding to these Euler angles
 
