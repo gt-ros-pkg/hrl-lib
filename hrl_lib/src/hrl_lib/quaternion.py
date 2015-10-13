@@ -69,7 +69,7 @@ def quat_inv_sign(q):
 
 # Return a normalized quaternion
 def quat_normal(q):
-    return q/np.norm(q)
+    return q/np.linalg.norm(q)
 
 # Return true or false whether two quaternion is on a same hemisphere.
 def AreQuaternionClose(q1,q2):
