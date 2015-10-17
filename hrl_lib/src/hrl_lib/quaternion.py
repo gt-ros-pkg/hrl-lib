@@ -43,6 +43,12 @@ from geometry_msgs.msg import Quaternion
 #copied from manipulation stack
 #angle between two quaternions (as lists)
 def quat_angle(quat1, quat2):
+
+    if type(quat1) == Quaternion:
+        quat1 = [quat1.x, quat1.y, quat1.z, quat1.w]
+    if type(quat2) == Quaternion:
+        quat2 = [quat2.x, quat2.y, quat2.z, quat2.w]
+
     dot = sum([x*y for (x,y) in zip(quat1, quat2)])
     if dot > 1.:
         dot = 1.
