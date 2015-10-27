@@ -44,10 +44,6 @@ from geometry_msgs.msg import Quaternion
 #angle between two quaternions (as lists)
 def quat_angle(quat1, quat2):
     dot = sum([x*y for (x,y) in zip(quat1, quat2)])
-    if dot > 1.:
-        dot = 1.
-    if dot < -1.:
-        dot = -1.
     angle = 2*math.acos(math.fabs(dot))
     return angle     
 
@@ -276,22 +272,39 @@ def quat_quat_mult(q1, q2):
 
 # t=0, then qm=qa
 def slerp(qa, qb, t):
+
+    if type(qa) == np.ndarray or type(qa) == list:
+        q1 = Quaternion()
+        q1.x = qa[0]
+        q1.y = qa[1]
+        q1.z = qa[2]
+        q1.w = qa[3]
+    else: q1 = qa
+    if type(qb) == np.ndarray or type(qb) == list:
+        q2 = Quaternion()
+        q2.x = qb[0]
+        q2.y = qb[1]
+        q2.z = qb[2]
+        q2.w = qb[3]
+    else: q2 = qb
+    
 	# quaternion to return
     qm = Quaternion()
 
 	# Calculate angle between them.
-    cosHalfTheta = qa.w * qb.w + qa.x * qb.x + qa.y * qb.y + qa.z * qb.z
-	# if qa=qb or qa=-qb then theta = 0 and we can return qa
+    cosHalfTheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z
+	# if q1=q2 or q1=-q2 then theta = 0 and we can return q1
     if abs(cosHalfTheta) >= 1.0:
-        qm.w = qa.w;qm.x = qa.x;qm.y = qa.y;qm.z = qa.z
-        return qm
+        qm.w = q1.w;qm.x = q1.x;qm.y = q1.y;qm.z = q1.z
+        if type(qa) == np.ndarray or type(qa) == list: return qa
+        else: return qm
 
     # shortest path
     if cosHalfTheta < 0.0:
-        qb.w *= -1.0
-        qb.x *= -1.0
-        qb.y *= -1.0
-        qb.z *= -1.0
+        q2.w *= -1.0
+        q2.x *= -1.0
+        q2.y *= -1.0
+        q2.z *= -1.0
         
         cosHalfTheta *= -1.0
 
@@ -300,22 +313,24 @@ def slerp(qa, qb, t):
     sinHalfTheta = np.sqrt(1.0 - np.cos(halfTheta)*np.cos(halfTheta))
     
     # if theta = 180 degrees then result is not fully defined
-    # we could rotate around any axis normal to qa or qb
+    # we could rotate around any axis normal to q1 or q2
     if abs(sinHalfTheta) < 0.001: # fabs is floating point absolute
-        qm.w = (qa.w * 0.5 + qb.w * 0.5)
-        qm.x = (qa.x * 0.5 + qb.x * 0.5)
-        qm.y = (qa.y * 0.5 + qb.y * 0.5)
-        qm.z = (qa.z * 0.5 + qb.z * 0.5)
-        return qm
+        qm.w = (q1.w * 0.5 + q2.w * 0.5)
+        qm.x = (q1.x * 0.5 + q2.x * 0.5)
+        qm.y = (q1.y * 0.5 + q2.y * 0.5)
+        qm.z = (q1.z * 0.5 + q2.z * 0.5)
+        if type(qa) == np.ndarray or type(qa) == list:
+            return np.array([qm.x, qm.y, qm.z, qm.w])
+        else: return qm
 
     ratioA = np.sin((1 - t) * halfTheta) / sinHalfTheta
     ratioB = np.sin(t * halfTheta) / sinHalfTheta
 
     #calculate Quaternion.
-    qm.w = (qa.w * ratioA + qb.w * ratioB)
-    qm.x = (qa.x * ratioA + qb.x * ratioB)
-    qm.y = (qa.y * ratioA + qb.y * ratioB)
-    qm.z = (qa.z * ratioA + qb.z * ratioB)
+    qm.w = (q1.w * ratioA + q2.w * ratioB)
+    qm.x = (q1.x * ratioA + q2.x * ratioB)
+    qm.y = (q1.y * ratioA + q2.y * ratioB)
+    qm.z = (q1.z * ratioA + q2.z * ratioB)
     
     #mag = np.sqrt(qm.w**2+qm.x**2+qm.y**2+qm.z**2)
     #print mag
@@ -323,4 +338,8 @@ def slerp(qa, qb, t):
     ## qm.x /= mag
     ## qm.y /= mag
     ## qm.z /= mag    
-    return qm
+    if (type(qa) == np.ndarray and type(qb) == np.ndarray) or \
+        (type(qa) == list and type(qb) == list):
+        return np.array([qm.x, qm.y, qm.z, qm.w])
+    else:
+        return qm
