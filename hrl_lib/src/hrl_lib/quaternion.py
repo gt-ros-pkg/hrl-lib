@@ -49,8 +49,9 @@ def quat_angle(quat1, quat2):
     if type(quat2) == Quaternion:
         quat2 = [quat2.x, quat2.y, quat2.z, quat2.w]
 
-    dot = sum([x*y for (x,y) in zip(quat1, quat2)])
-    angle = 2*math.acos(math.fabs(dot))
+    dot = math.fabs(sum([x*y for (x,y) in zip(quat1, quat2)]))
+    if dot > 1.0: dot = 1.0
+    angle = 2*math.acos( dot )
     return angle     
 
 # Return a co-distance matrix between X and Y.
