@@ -1,0 +1,24 @@
+<package>
+  <name>hrl_srvs</name>
+  <version>0.0.0</version>
+  <description>ROS messages that the Healthcare Robotics Lab, Georgia Tech often uses.</description>
+  <maintainer email="deric.park@gatech.edu">Daehyung Park</maintainer>
+
+  <license>New BSD</license>
+
+  <url type="website">http://ros.org/wiki/hrl_srvs</url>
+
+  <author>Advait Jain</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>message_runtime</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+</package>

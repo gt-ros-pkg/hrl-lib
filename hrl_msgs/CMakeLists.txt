@@ -12,7 +12,7 @@ generate_messages(
 )
 
 catkin_package(
-    DEPENDS 
+    DEPENDS roscpp rospy
     CATKIN_DEPENDS message_runtime std_msgs
     INCLUDE_DIRS 
     LIBRARIES 
