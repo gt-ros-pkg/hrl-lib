@@ -215,6 +215,11 @@ def quat2rot(quat):
     return rot
 
 
+# Return a quaternion array from a quaternion
+def quat2array(quat):
+    return np.array([quat.x, quat.y, quat.z, quat.w])
+
+
 def euler2quat(z=0, y=0, x=0):
     ''' Return quaternion corresponding to these Euler angles
 
