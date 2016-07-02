@@ -3,7 +3,7 @@ project(hrl_srvs)
 find_package(catkin REQUIRED COMPONENTS roscpp rospy message_generation std_msgs)
 
 add_service_files(
-  FILES Bool_None.srv FloatArray_None.srv Float_Int.srv Int_None.srv None_Float.srv FloatArray_FloatArray.srv FloatFloat_Int.srv Float_None.srv None_Bool.srv None_Int32.srv FloatArray_Float.srv FloatFloat_None.srv Int_Int.srv None_FloatArray.srv String_None.srv Float_Float.srv String_String.srv
+  FILES Bool_None.srv FloatArray_None.srv Float_Int.srv Int_None.srv None_Float.srv FloatArray_FloatArray.srv FloatFloat_Int.srv Float_None.srv None_Bool.srv None_Int32.srv FloatArray_Float.srv FloatFloat_None.srv Int_Int.srv None_FloatArray.srv String_None.srv StringArray_None.srv Float_Float.srv String_String.srv 
 )
 
 generate_messages(
