@@ -4,7 +4,7 @@ find_package(catkin REQUIRED COMPONENTS message_generation std_msgs)
 
 add_message_files(
   DIRECTORY msg
-  FILES FloatArray.msg FloatArrayBare.msg StringArray.msg
+  FILES FloatArray.msg FloatArrayBare.msg StringArray.msg FloatMatrix.msg
 )
 
 generate_messages(
